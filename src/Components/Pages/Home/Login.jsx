@@ -1,4 +1,4 @@
-import React ,{ useState } from 'react'
+import React, { useState } from 'react'
 import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -12,11 +12,16 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 
 import axios from 'axios'
 
-import { Link,useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+
 
 
 
 const Login = () => {
+
+
+    
+
 
     const theme = createTheme();
     const navigate = useNavigate();
@@ -24,7 +29,9 @@ const Login = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
-    function handleSubmit(event){
+    const [error,setError] = useState(false);
+
+    function handleSubmit(event) {
 
         event.preventDefault();
 
@@ -36,16 +43,15 @@ const Login = () => {
         }
 
         axios.post(`http://127.0.0.1:8000/api/login`, formData).then((response) => {
-           
-        console.log(response)
-        if(response){
-            if(response.data.success==="Login Successfull"){
-                navigate("/dashboard");
+
+            if (response) {
+                if (response.data.success === "Login Successfull") {
+                    navigate("/dashboard");
+                }
             }
-        }
 
         }).catch((error) => {
-            console.error(error);
+            setError(true);
         })
 
     }
@@ -77,7 +83,12 @@ const Login = () => {
                             name="email"
                             autoComplete="email"
                             autoFocus
+                            value={values.email}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
                         />
+
+                            <p className="form-error">{{error}}</p>
                         <TextField
                             margin="normal"
                             required
@@ -87,7 +98,13 @@ const Login = () => {
                             type="password"
                             id="password"
                             autoComplete="current-password"
+                            value={values.password}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
                         />
+                        {error.password ? (
+                            <p className="form-error">{error.password}</p>
+                        ) : null}
                         <Button
                             type="submit"
                             fullWidth
